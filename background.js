@@ -1,5 +1,5 @@
 function injectedFunction() {
-    var needAuditEmployee = [];
+    // var needAuditEmployee = [];
 
     function findIframeBySrc(doc, targetSrc) {
         // Get all iframes in the current document
@@ -32,6 +32,8 @@ function injectedFunction() {
                 if (mutation.type === 'childList') {
                     // 检查新添加的节点是否是目标按钮
                     mutation.addedNodes.forEach(function(node) {
+
+                        // 从我的代办中发流程
                         if (node.outerHTML.indexOf('boe/approve.html')>-1) {
                             debugger
                             let approveIframe = findIframeBySrc(document,"approve.html?v=1.02&token=")
@@ -49,6 +51,39 @@ function injectedFunction() {
                                     debugger
                                     let chekcedList = Array.from(inputAndSpanList).filter(n=>{return n.children[0].checked})
                                     // 这里清空一下,因为是这次发的
+                                    // needAuditEmployee = [];
+                                    chekcedList.forEach(n=>{
+                                        // Todo
+                                    })
+                                    chrome.storage.session.set({ needLogin: 'needLogin' },() => {});
+
+
+                                    // chekcedList.forEach(n=>{needAuditEmployee.push(n.innerText)})
+                                    // //Todo 这里已经成功拿到人名了
+                                    // console.log(needAuditEmployee)
+                                    // debugger
+                                });
+                            }
+                            // }
+                            // 因为我们已经找到了目标按钮
+                            // listObserver.disconnect();
+                        }
+
+                        //新增发流程
+                        if(node.outerHTML.indexOf('wfrStart.html')>-1){
+                            let approveIframe = findIframeBySrc(document,"wfrStart.html")
+                            approveIframe.onload = function (){
+                                let confirm  = node.getElementsByClassName('layui-layer-btn0')
+
+                                let theIframeDoc = approveIframe.contentDocument || approveIframe.contentWindow.document;
+                                let listByClassName = theIframeDoc.getElementsByClassName("list-group")
+                                Array.from(confirm)[0].addEventListener('click', function() {
+
+                                    //listByClassName[0]->list-group-item noborder  .children[2]->ul.list-group .children->list-group-item noborder item-cursor
+                                    let inputAndSpanList = listByClassName[0].children[2].children
+                                    //所有勾选的list
+                                    let chekcedList = Array.from(inputAndSpanList).filter(n=>{return n.children[0].checked})
+                                    // 这里清空一下,因为是这次发的
                                     needAuditEmployee = [];
                                     chekcedList.forEach(n=>{needAuditEmployee.push(n.innerText)})
                                     //Todo 这里已经成功拿到人名了
@@ -56,9 +91,6 @@ function injectedFunction() {
                                     debugger
                                 });
                             }
-                            // }
-                            // 因为我们已经找到了目标按钮
-                            // listObserver.disconnect();
                         }
 
 
@@ -98,6 +130,8 @@ function injectedFunction() {
     if(document.body instanceof Node) {
         observer.observe(document.body, {childList: true, subtree: true});
     }
+
+
 
 
 }
