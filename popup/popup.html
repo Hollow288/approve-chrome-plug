@@ -4,10 +4,56 @@
     <title>Water Popup</title>
 
     <link rel="stylesheet" href="/css/bootstrap.css">
+    <link rel="stylesheet" href="/css/fonts.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        .body-basic{
+            width: 200px;
+            /*height: 200px;*/
+        }
+
+        .alert-dismissible {
+            padding-right: 0rem;
+        }
+
+        body{
+            font-family: Alibaba-PuHuiTi,serif;
+        }
+
+        .btn-close{}
+    </style>
 </head>
 <body>
-<!--<img src="./stay_hydrated.png" id="hydrateImage">-->
-<button type="button" class="btn btn-primary">Primary</button>
+<div class="body-basic">
+
+    <nav class="navbar bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="/css/favicon.png" alt="Logo" width="30" height="30" class="d-inline-block align-text-top">
+                <span style="font-size: 15px;font-family: Alibaba-PuHuiTi,serif"> 当前需要审核的人：</span>
+
+            </a>
+        </div>
+    </nav>
+    <div class="d-flex flex-column">
+<!--        <div class="p-2">-->
+            <div id="liveAlertPlaceholder" style="font-size: 13px"></div>
+<!--        </div>-->
+    </div>
+
+
+    <div class="d-flex">
+        <div class="p-2">
+            <button type="button" class="btn btn-outline-primary" id="flushedBtn" style="font-size: 13px;">刷新人员</button>
+        </div>
+        <div class="p-2">
+            <button type="button" class="btn btn-outline-primary" id="flushedBtns" style="font-size: 13px;margin-left: 10px">返回首页</button>
+        </div>
+
+    </div>
+</div>
 
 <script src="/js/jquery-2.2.4.min.js"></script>
 <script src="/js/bootstrap.js"></script>

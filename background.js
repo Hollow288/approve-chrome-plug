@@ -1,5 +1,5 @@
 function injectedFunction() {
-    // var needAuditEmployee = [];
+    var needAuditEmployee = [];
 
     function findIframeBySrc(doc, targetSrc) {
         // Get all iframes in the current document
@@ -51,14 +51,26 @@ function injectedFunction() {
                                     debugger
                                     let chekcedList = Array.from(inputAndSpanList).filter(n=>{return n.children[0].checked})
                                     // 这里清空一下,因为是这次发的
-                                    // needAuditEmployee = [];
-                                    chekcedList.forEach(n=>{
-                                        // Todo
+                                    needAuditEmployee = [];
+                                    chekcedList.forEach(n=>{needAuditEmployee.push(n.innerText)})
+
+                                    const regex = /\s*\([^)]*\)\s*/g;
+                                    needAuditEmployee.forEach((n, index)=>{
+                                        needAuditEmployee[index] = n.replace(regex, '').trim();
                                     })
-                                    chrome.storage.session.set({ needLogin: 'needLogin' },() => {});
+                                    //Todo VM2864:76 Uncaught (in promise) Error: Access to storage is not allowed from this context.
+                                    //     at HTMLAnchorElement.<anonymous> (<anonymous>:76:33)
+                                    chrome.storage.session.set({ needAuditEmployee: needAuditEmployee },() => {});
+                                    chrome.storage.session.get(["needAuditEmployee"]).then((needAuditEmployee) => {
+                                        console.log("Value is " + needAuditEmployee.key);
+                                        console.log(needAuditEmployee)
+                                        if(typeof needAuditEmployee === 'undefined' || needAuditEmployee.length === 0){
+                                            alert('没有记录到待审核人!', 'success')
+                                        }
+                                    });
 
 
-                                    // chekcedList.forEach(n=>{needAuditEmployee.push(n.innerText)})
+
                                     // //Todo 这里已经成功拿到人名了
                                     // console.log(needAuditEmployee)
                                     // debugger
