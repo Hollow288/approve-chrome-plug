@@ -21,8 +21,8 @@
   },
   "action": {
     "default_title": "Action Button"
+  },
+  "action": {
+    "default_popup": "./popup/popup.html"
   }
-//  "action": {
-//    "default_popup": "./popup/popup.html"
-//  }
 }

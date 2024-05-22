@@ -60,25 +60,14 @@ function injectedFunction() {
                                     })
                                     //Todo VM2864:76 Uncaught (in promise) Error: Access to storage is not allowed from this context.
                                     //     at HTMLAnchorElement.<anonymous> (<anonymous>:76:33)
-                                    chrome.storage.session.set({ needAuditEmployee: needAuditEmployee },() => {});
-                                    chrome.storage.session.get(["needAuditEmployee"]).then((needAuditEmployee) => {
-                                        console.log("Value is " + needAuditEmployee.key);
-                                        console.log(needAuditEmployee)
-                                        if(typeof needAuditEmployee === 'undefined' || needAuditEmployee.length === 0){
-                                            alert('没有记录到待审核人!', 'success')
-                                        }
-                                    });
+                                    chrome.storage.local.set({ needAuditEmployee: needAuditEmployee },() => {});
+                                    // chrome.storage.local.get(["needAuditEmployee"]).then((needAuditEmployee) => {
+                                    //     console.log("Value is " + needAuditEmployee.key);
+                                    //     console.log(needAuditEmployee)
+                                    // });
 
-
-
-                                    // //Todo 这里已经成功拿到人名了
-                                    // console.log(needAuditEmployee)
-                                    // debugger
                                 });
                             }
-                            // }
-                            // 因为我们已经找到了目标按钮
-                            // listObserver.disconnect();
                         }
 
                         //新增发流程
@@ -98,9 +87,18 @@ function injectedFunction() {
                                     // 这里清空一下,因为是这次发的
                                     needAuditEmployee = [];
                                     chekcedList.forEach(n=>{needAuditEmployee.push(n.innerText)})
-                                    //Todo 这里已经成功拿到人名了
-                                    console.log(needAuditEmployee)
-                                    debugger
+
+                                    const regex = /\s*\([^)]*\)\s*/g;
+                                    needAuditEmployee.forEach((n, index)=>{
+                                        needAuditEmployee[index] = n.replace(regex, '').trim();
+                                    })
+                                    //Todo VM2864:76 Uncaught (in promise) Error: Access to storage is not allowed from this context.
+                                    //     at HTMLAnchorElement.<anonymous> (<anonymous>:76:33)
+                                    chrome.storage.local.set({ needAuditEmployee: needAuditEmployee },() => {});
+                                    // chrome.storage.local.get(["needAuditEmployee"]).then((needAuditEmployee) => {
+                                    //     console.log("Value is " + needAuditEmployee.key);
+                                    //     console.log(needAuditEmployee)
+                                    // });
                                 });
                             }
                         }
