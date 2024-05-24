@@ -1,5 +1,28 @@
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    // 检查页面加载状态
+    debugger
+    if (changeInfo.status === 'complete') {
+        // 执行脚本注入
+        injectScript();
+    }
+});
+
+
+function injectScript() {
+    // 查询当前活动的标签页
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        let activeTab = tabs[0];
+        // 执行脚本注入
+        chrome.scripting.executeScript({
+            target: {tabId: activeTab.id},
+            func: injectedFunction
+        });
+    });
+}
+
+
 function injectedFunction() {
-    var needAuditEmployee = [];
+
 
     function findIframeBySrc(doc, targetSrc) {
         // Get all iframes in the current document
@@ -46,21 +69,29 @@ function injectedFunction() {
                                     // console.log(listByClassName)
                                     debugger
                                     //listByClassName[0]->list-group-item noborder  .children[1]->ul.list-group .children->list-group-item noborder item-cursor
-                                    let inputAndSpanList = listByClassName[0].children[1].children
+                                    // let inputAndSpanList = listByClassName[0].children[1].children
+                                    let inputAndSpanList = Array.from(listByClassName[0].children).filter(child => child.tagName.toLowerCase() === 'ul')[0];
                                     //所有勾选的list
                                     debugger
-                                    let chekcedList = Array.from(inputAndSpanList).filter(n=>{return n.children[0].checked})
+                                    // let chekcedList = Array.from(inputAndSpanList).filter(n=>{return n.children[0].checked})
+                                    let chekcedList = Array.from(inputAndSpanList.children).filter(n=>{return n.children[0].checked});
                                     // 这里清空一下,因为是这次发的
-                                    needAuditEmployee = [];
+                                    let needAuditEmployee = [];
                                     chekcedList.forEach(n=>{needAuditEmployee.push(n.innerText)})
 
                                     const regex = /\s*\([^)]*\)\s*/g;
                                     needAuditEmployee.forEach((n, index)=>{
                                         needAuditEmployee[index] = n.replace(regex, '').trim();
                                     })
+
+                                    chrome.storage.local.get(["needAuditEmployee"]).then((localEmployees) => {
+                                        let resultArr = needAuditEmployee.concat(localEmployees.needAuditEmployee)
+                                        chrome.storage.local.set({ needAuditEmployee: resultArr },() => {});
+                                    });
+
                                     //Todo VM2864:76 Uncaught (in promise) Error: Access to storage is not allowed from this context.
                                     //     at HTMLAnchorElement.<anonymous> (<anonymous>:76:33)
-                                    chrome.storage.local.set({ needAuditEmployee: needAuditEmployee },() => {});
+
                                     // chrome.storage.local.get(["needAuditEmployee"]).then((needAuditEmployee) => {
                                     //     console.log("Value is " + needAuditEmployee.key);
                                     //     console.log(needAuditEmployee)
@@ -92,9 +123,14 @@ function injectedFunction() {
                                     needAuditEmployee.forEach((n, index)=>{
                                         needAuditEmployee[index] = n.replace(regex, '').trim();
                                     })
+
+                                    chrome.storage.local.get(["needAuditEmployee"]).then((localEmployees) => {
+                                        let resultArr = needAuditEmployee.concat(localEmployees.needAuditEmployee)
+                                        chrome.storage.local.set({ needAuditEmployee: resultArr },() => {});
+                                    });
                                     //Todo VM2864:76 Uncaught (in promise) Error: Access to storage is not allowed from this context.
                                     //     at HTMLAnchorElement.<anonymous> (<anonymous>:76:33)
-                                    chrome.storage.local.set({ needAuditEmployee: needAuditEmployee },() => {});
+
                                     // chrome.storage.local.get(["needAuditEmployee"]).then((needAuditEmployee) => {
                                     //     console.log("Value is " + needAuditEmployee.key);
                                     //     console.log(needAuditEmployee)
@@ -109,7 +145,7 @@ function injectedFunction() {
             }
         });
 
-            // 监视按钮元素的父级容器的变化
+        // 监视按钮元素的父级容器的变化
         listObserver.observe(theLastIframeBody, {childList: true, subtree: true});
 
     }
@@ -135,21 +171,10 @@ function injectedFunction() {
         }
     });
 
-
-
     if(document.body instanceof Node) {
         observer.observe(document.body, {childList: true, subtree: true});
     }
 
-
-
-
 }
 
-chrome.action.onClicked.addListener((tab) => {
-    chrome.scripting.executeScript({
-        target: {tabId: tab.id},
-        func: injectedFunction,
-    });
-});
 
