@@ -98,6 +98,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    document.getElementById('toLoginPageBtn').addEventListener('click', function() {
+        toLoginPage()
+    });
 });
 
 
@@ -258,9 +262,20 @@ function injectedFunction() {
         observer.observe(document.body, {childList: true, subtree: true});
     }
 
+}
 
+function toLoginPage(){
 
+    // 获取当前活动的标签页
+    chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+        let activeTab = tabs[0];
+        let currentUrl = tabs[0].url;
+        let baseUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/'));
+        let newUrl = `${baseUrl}/syslogint.html`
 
+        // 更新当前活动的标签页 URL
+        chrome.tabs.update(activeTab.id, { url: newUrl });
+    });
 }
 
 
