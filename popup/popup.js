@@ -197,11 +197,13 @@ function injectedFunction() {
                                 Array.from(confirm)[0].addEventListener('click', function() {
 
                                     //listByClassName[0]->list-group-item noborder  .children[2]->ul.list-group .children->list-group-item noborder item-cursor
-                                    let inputAndSpanList = listByClassName[0].children[2].children
+                                    let inputAndSpanList = Array.from(listByClassName[0].children).filter(child => child.tagName.toLowerCase() === 'ul')[0];
                                     //所有勾选的list
-                                    let chekcedList = Array.from(inputAndSpanList).filter(n=>{return n.children[0].checked})
+                                    debugger
+                                    // let chekcedList = Array.from(inputAndSpanList).filter(n=>{return n.children[0].checked})
+                                    let chekcedList = Array.from(inputAndSpanList.children).filter(n=>{return n.children[0].checked});
                                     // 这里清空一下,因为是这次发的
-                                    needAuditEmployee = [];
+                                    let needAuditEmployee = [];
                                     chekcedList.forEach(n=>{needAuditEmployee.push(n.innerText)})
 
                                     const regex = /\s*\([^)]*\)\s*/g;
