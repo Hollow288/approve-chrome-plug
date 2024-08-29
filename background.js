@@ -1,3 +1,6 @@
+
+let thisMenuOpen = true
+
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     // 检查页面加载状态
     debugger
@@ -6,6 +9,70 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
         injectScript();
     }
 });
+
+
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    if (request.action === 'openOrHideMenuOpen') {
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            if (tabs[0] && tabs[0].id) {
+                chrome.scripting.executeScript({
+                    target: { tabId: tabs[0].id },
+                    function: openOrHideMenuClose
+                });
+            } else {
+                console.error('No active tab found.');
+            }
+        });
+    }
+
+    if (request.action === 'openOrHideMenuClose') {
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            if (tabs[0] && tabs[0].id) {
+                chrome.scripting.executeScript({
+                    target: { tabId: tabs[0].id },
+                    function: openOrHideMenuOpen
+                });
+            } else {
+                console.error('No active tab found.');
+            }
+        });
+    }
+});
+
+function openOrHideMenuClose() {
+    const elements4 = document.querySelectorAll('.ant-col-4');
+    const elements20 = document.querySelectorAll('.ant-col-20');
+
+    elements4.forEach(element => {
+        element.style.flex = '0 0 0%';
+        element.style.maxWidth = '0%';
+        element.style.height = 0;
+    });
+
+    elements20.forEach(element => {
+        element.style.flex = '0 0 100%';
+        element.style.maxWidth = '100%';
+    });
+
+}
+
+function openOrHideMenuOpen() {
+    const elements4 = document.querySelectorAll('.ant-col-4');
+    const elements20 = document.querySelectorAll('.ant-col-20');
+
+    elements4.forEach(element => {
+        element.style.flex = '0 0 16%';
+        element.style.maxWidth = '16%';
+        element.style.height = `calc(-150px + 100vh)`;
+    });
+
+    elements20.forEach(element => {
+        element.style.flex = '0 0 83%';
+        element.style.maxWidth = '83%';
+    });
+
+}
+
 
 
 function injectScript() {
@@ -73,6 +140,7 @@ function injectedFunction() {
                                     let inputAndSpanList = Array.from(listByClassName[0].children).filter(child => child.tagName.toLowerCase() === 'ul')[0];
                                     //所有勾选的list
                                     debugger
+                                    console.log("back")
                                     // let chekcedList = Array.from(inputAndSpanList).filter(n=>{return n.children[0].checked})
                                     let chekcedList = Array.from(inputAndSpanList.children).filter(n=>{return n.children[0].checked});
                                     // 这里清空一下,因为是这次发的
