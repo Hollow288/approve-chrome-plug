@@ -1,5 +1,4 @@
 var pendingAuditList;
-let menuIsOpen = true
 initPendingAudit()
 
 const arrayList = document.getElementById('array-list');
@@ -104,7 +103,6 @@ document.addEventListener('DOMContentLoaded', function() {
         toLoginPage()
     });
 
-    let that = this
     document.getElementById('OpenOrHideMenu').addEventListener('click', function() {
         chrome.storage.local.get(["menuIsOpen"]).then((menuIsOpen) => {
            if(menuIsOpen.menuIsOpen === 'open'){
@@ -116,6 +114,10 @@ document.addEventListener('DOMContentLoaded', function() {
            }
         });
 
+    });
+
+    document.getElementById('OpenFloatingWindow').addEventListener('click', function() {
+            chrome.runtime.sendMessage({action: 'openFloatingWindow'});
     });
 });
 

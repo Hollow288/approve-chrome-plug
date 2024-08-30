@@ -1,5 +1,5 @@
 
-let thisMenuOpen = true
+let popupWindowId = null; // 用于保存窗口 ID
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     // 检查页面加载状态
@@ -37,7 +37,46 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             }
         });
     }
+
+
+    if (request.action === 'openFloatingWindow') {
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            if (tabs[0] && tabs[0].id) {
+                // 如果窗口已经存在，不再创建新的窗口
+                if (popupWindowId) {
+                    chrome.windows.get(popupWindowId, (window) => {
+                        if (chrome.runtime.lastError || !window) {
+                            // 如果窗口 ID 无效或窗口已关闭，重置 popupWindowId 并创建新窗口
+                            createPopupWindow();
+                        } else {
+                            console.log("窗口已存在，不再创建新的窗口。");
+                            chrome.windows.update(popupWindowId, { focused: true });
+                        }
+                    });
+                } else {
+                    // 如果没有已存在的窗口，创建一个新窗口
+                    createPopupWindow();
+                }
+            } else {
+                console.error('No active tab found.');
+            }
+        });
+    }
 });
+
+
+function createPopupWindow() {
+    chrome.windows.create({
+        url: chrome.runtime.getURL("popup/copy.html"),
+        type: "popup",
+        width: 400,
+        height: 300,
+        state: "normal"
+    }, (newWindow) => {
+        // 保存新创建窗口的 ID
+        popupWindowId = newWindow.id;
+    });
+}
 
 function openOrHideMenuClose() {
     const elements4 = document.querySelectorAll('.ant-col-4');

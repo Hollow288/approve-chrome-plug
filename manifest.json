@@ -15,7 +15,8 @@
     "scripting",
     "storage",
     "notifications",
-    "tabs"
+    "tabs",
+    "windows"
   ],
   "background": {
     "service_worker": "background.js"
