@@ -16,13 +16,11 @@
     "storage",
     "notifications",
     "tabs",
-    "windows"
+    "windows",
+    "clipboardWrite"
   ],
   "background": {
     "service_worker": "background.js"
-  },
-  "action": {
-    "default_title": "Action Button"
   },
   "action": {
     "default_popup": "./popup/popup.html"

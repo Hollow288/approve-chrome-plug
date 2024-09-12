@@ -12,6 +12,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+   debugger
     if (request.action === 'openOrHideMenuOpen') {
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             if (tabs[0] && tabs[0].id) {
@@ -24,6 +25,17 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             }
         });
     }
+
+    if (request.action === 'copyClipboardText') {
+        debugger
+        const textToCopy = request.text; // 获取从消息中发送过来的文本
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            console.log('文本已复制到剪贴板！');
+        }).catch(err => {
+            console.error('复制失败：', err);
+        });
+    }
+
 
     if (request.action === 'openOrHideMenuClose') {
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
